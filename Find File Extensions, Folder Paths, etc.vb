@@ -25,7 +25,7 @@ Dim fd As FileDialog
 	End With
 End Function
 
-Sub attempttype(0
+Sub attempttype()
 ' sample: getting all attributes of our new Type when 
 Dim my_attrs As extfinder
 	my_attrs = extfind() ' returns all extfind attrs of the selected file
