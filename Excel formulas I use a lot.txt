@@ -1,0 +1,68 @@
+Formulas I use a lot
+
+Count number of times a character appears in a cell
+=LEN(a1)-LEN(SUBSTITUTE(a1,"a",""))
+
+Copy all text to the right of a comma
+=TRIM(RIGHT(SUBSTITUTE(A1,",",REPT(" ",LEN(A1))),LEN(A1)))
+(change RIGHT to LEFT to get to the left of the comma.)
+
+If a cell has a certain punctuation symbol, trim everything to the left of it (all but the the last 3 chars).
+=IF(COUNTIF(B2,"*[*")>0,LEFT(B2,LEN(B2)-3),B2)
+
+Got a big list and want to order things in the order they appear but group them too?
+Basically if data looks like
+
+ID		Mission		Station
+1		35			12
+2		40			15
+3		35			17
+4		40			19
+5		35			20
+
+And you want to find which order missions went in, with ID as the order
+Then use:
+=COUNTIFS(B:B,B2,A:A,"<"&A2) + 1
+Which returns 
+
+ID	Mission	Station	Order
+1	35		12		1
+2	40		15		1
+3	35		17		2
+4	40		19		2
+5	35		20		3
+
+Or if you sort by mission:
+ID	Mission	Station	Order
+1	35		12		1
+3	35		17		2
+5	35		20		3
+2	40		15		1
+4	40		19		2
+
+
+You want the lookup of Index Match but also want the narrowing-down effect of countifs?
+Arrayed Index Match can do it.
+{=index(H:H,match(1,(B2=B:B)*(u2=U:U),0))}
+Boom. Pretend B2=B:B is what you'd do with countif(B:B,B2).
+Don't want exactly u2? Instead want U2-1 or whatever? Fine, just plug that in.
+Wrap that in an IfError though.
+{=iferror(index(H:H,match(1,(B2=B:B)*(u2=U:U),0)),"")}
+Don't forget to Control+Shift+Enter!
+Oh and uh, this one takes a long time to run.
+
+Extracting a string in the middle of a string of data
+This one depends. A common case for this is "my data is between two commas- city, state, country- and i want states.
+The problem is, the formula is longer than if it wasn't a comma, but was instead some other string.
+=SUBSTITUTE(MID(SUBSTITUTE("," & A2&REPT(" ",6),",",REPT(",",255)),2*255,255),",","")
+That's for text between two commas. Two commas are the same character, so Excel needs a bigger lift to find text between them.
+This is for parentheses. Note that it's shorter.
+=MID(A2,FIND("(",A2)+1,FIND(")",A2)-FIND("(",A2)-1)
+In any case where your string is between two values that aren't alike (unique text, different punctuation, numbers, etc.), use the above.
+If you want something where the charcter to look for is the same, use the longer one.
+
+
+=COLUMN(INDIRECT(A2&1))
+I need to convert a letter into a number. I use:
+That actually does values up to 3 letters. It' returning what number of column a string is if it was a real column in Excel.
+You can concatenate that as well in case you have more than 4 letters.
